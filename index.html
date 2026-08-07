@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCP Document Editor</title>
+<style>
+@font-face { font-family: 'ChopinScript'; src: url('chopinscript.ttf') format('truetype'); }
+
+:root {
+  --bg: #0c1220;
+  --panel: #121a2b;
+  --panel2: #182235;
+  --border: #2b3957;
+  --text: #e7edf8;
+  --muted: #8fa0bf;
+  --hl: #1c2940;
+  --orange: #7ab7ff;
+  --red: #ff6f7d;
+  --blue: #63d5ff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: #0b1120; }
+::-webkit-scrollbar-thumb { background: #314360; border: 3px solid #0b1120; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #436086; }
+body { background:
+    radial-gradient(circle at top left, rgba(122,183,255,0.12), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(99,213,255,0.08), transparent 30%),
+    var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-family: 'Courier New', monospace; }
+
+/* ══ MODALS ══ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 10000;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+  background: linear-gradient(180deg, rgba(24,34,53,0.98), rgba(17,24,39,0.98));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px; max-width: 680px; width: 95%;
+  max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+}
+.modal-title {
+  font-size: 14px; font-weight: bold; color: #fff;
+  margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  letter-spacing: 0.3px;
+}
+.modal-close {
+  background: transparent; border: none; color: var(--muted);
+  font-size: 16px; cursor: pointer; padding: 0 4px;
+}
+.modal-close:hover { color: #fff; }
+
+/* New Doc Type List */
+.type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 56vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.type-option {
+  width: 100%;
+  text-align: left;
+  background: linear-gradient(180deg, rgba(18,26,43,0.98), rgba(14,20,33,0.98));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: var(--text);
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+}
+.type-option:hover {
+  border-color: var(--orange);
+  background: rgba(28,41,64,0.96);
+  transform: translateY(-1px);
+}
+.type-option-name {
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.type-option-desc {
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+/* Drafts list */
+.draft-item {
+  background: linear-gradient(180deg, rgba(18,26,43,0.98), rgba(14,20,33,0.98));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 10px; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.draft-item-info { flex: 1; min-width: 0; }
+.draft-item-title { font-size: 11px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.draft-item-meta { font-size: 9px; color: var(--muted); margin-top: 2px; }
+.draft-type-badge {
+  font-size: 9px; background: var(--hl); border: 1px solid var(--border);
+  padding: 1px 5px; color: var(--orange); flex-shrink: 0;
+}
+.draft-btn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text); font-size: 10px; padding: 3px 8px; cursor: pointer;
+  font-family: 'Courier New', monospace; flex-shrink: 0; border-radius: 999px;
+}
+.draft-btn:hover { background: rgba(28,41,64,0.95); }
+.draft-btn.danger { border-color: #5a2020; color: #ff8888; }
+.draft-btn.danger:hover { background: rgba(180,0,0,0.15); }
+.no-drafts { text-align: center; color: var(--muted); font-size: 11px; padding: 20px; }
+
+/* ══ TOP BAR ══ */
+.top-bar {
+  background: linear-gradient(180deg, rgba(11,17,32,0.98), rgba(9,14,26,0.98));
+  padding: 8px 12px;
+  display: flex; gap: 6px; border-bottom: 1px solid rgba(91,118,165,0.35);
+  align-items: center;
+}
+.top-title { font-size: 12px; font-weight: bold; color: #9db2d3; margin-right: 14px; }
+.btn-top {
+  background: rgba(18,26,43,0.9); color: var(--text); border: 1px solid var(--border);
+  padding: 6px 12px; font-size: 11px; cursor: pointer;
+  font-family: 'Courier New', monospace; font-weight: bold;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+}
+.btn-top:hover { background: rgba(28,41,64,0.98); }
+.btn-top.active { background: rgba(54,82,125,0.9); border-color: var(--orange); }
+.spacer { flex-grow: 1; }
+
+/* ══ WORKSPACE ══ */
+.workspace { display: flex; flex: 1; overflow: hidden; background: linear-gradient(180deg, rgba(7,11,20,0.12), rgba(7,11,20,0.35)); }
+
+.document-pane {
+  flex: 1;
+  background:
+    radial-gradient(circle at top, rgba(122,183,255,0.08), transparent 24%),
+    linear-gradient(180deg, rgba(12,18,32,0.96), rgba(13,18,29,0.98));
+  padding: 40px 20px; display: flex; justify-content: center;
+  overflow-y: auto;
+}
+
+.document-page {
+  width: 488px; min-height: 750px; flex-shrink: 0;
+  padding: 20px 18px 30px 18px;
+  display: flex; flex-direction: column; gap: 0;
+  position: relative;
+  background-image: url('paper.png');
+  background-size: 488px 750px;
+  background-repeat: repeat-y;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.45);
+  border-radius: 10px;
+  color: #111;
+}
+
+/* Title */
+.title-section { display: flex; flex-direction: column; margin-bottom: 8px; position: relative; z-index: 10; }
+.doc-title-input {
+  font-size: 22px; font-weight: bold; background: transparent;
+  border: none; outline: none; color: #111; width: 100%;
+  font-family: 'Courier New', monospace; resize: none; overflow: hidden; line-height: 1.25; padding: 0;
+}
+.doc-title-input:focus { background: rgba(0,0,0,0.08); }
+.title-line { width: 100%; height: 2px; background-color: #333; margin: 6px 0 10px 0; }
+
+/* Page footer */
+.page-footer { margin-top: auto; padding-top: 14px; text-align: center; font-size: 10px; color: #555; }
+
+/* ══ ELEMENT WRAPPER — controls float absolutely on hover ══ */
+.doc-element-wrapper { position: relative; display: block; z-index: 10; width: 100%; }
+.doc-element-wrapper:hover { background: rgba(0,0,0,0.05); }
+.doc-element-wrapper.editing { background: rgba(0,0,0,0.12); }
+
+.element-controls {
+  position: absolute; top: 0; right: 0;
+  display: flex; gap: 2px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.12s;
+  z-index: 200;
+  background: rgba(14,14,22,0.82);
+  padding: 2px 3px;
+}
+.doc-element-wrapper:hover .element-controls { opacity: 1; pointer-events: auto; }
+
+.ctrl-btn {
+  background: rgba(20,20,30,0.9); border: 1px solid #444; color: #bbb;
+  width: 19px; height: 19px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; padding: 0; border-radius: 2px; flex-shrink: 0;
+}
+.ctrl-btn:hover { border-color: var(--orange); color: #fff; background: rgba(0,0,0,0.95); }
+.ctrl-btn.del:hover { background: rgba(160,20,20,0.8); border-color: #f66; }
+
+.type-picker { position: relative; flex-shrink: 0; }
+.type-picker-btn {
+  background: rgba(20,20,30,0.9); border: 1px solid #444; color: #bbb;
+  width: 19px; height: 19px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; padding: 0; border-radius: 2px;
+}
+.type-picker-btn:hover { border-color: var(--orange); color: #fff; }
+
+.type-picker-menu {
+  display: none; position: absolute; top: 21px; right: 0;
+  background: #1a1a26; border: 1px solid #444;
+  z-index: 9999; min-width: 80px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+}
+.type-picker-menu.open { display: block; }
+.type-picker-opt {
+  display: block; width: 100%; background: transparent; border: none;
+  color: #bbb; font-family: 'Courier New', monospace; font-size: 10px;
+  padding: 5px 10px; text-align: left; cursor: pointer; white-space: nowrap;
+}
+.type-picker-opt:hover { background: var(--hl); color: #fff; }
+.type-picker-opt.active { background: var(--orange); color: #fff; }
+
+/* ══ DOCUMENT CONTENT ELEMENTS ══ */
+.doc-input {
+  width: 100%; background: transparent; border: none;
+  font-family: 'Courier New', monospace; color: #111;
+  resize: none; outline: none; overflow: hidden; padding: 0; margin: 0; display: block;
+}
+.doc-input:focus { background: rgba(180,180,180,0.2); }
+
+.doc-header   { font-size: 22px; font-weight: bold; line-height: 1.25; }
+.doc-header2  { font-size: 16px; font-weight: bold; line-height: 1.3; }
+.doc-header3  { font-size: 13px; font-weight: bold; line-height: 1.3; }
+.doc-paragraph{ font-size: 12px; line-height: 1.45; }
+.doc-smalltext{ font-size: 11px; line-height: 1.35; color: #333; }
+
+/* Field element (label: value) */
+.doc-field-row { display: flex; align-items: baseline; gap: 5px; width: 100%; padding: 1px 0; }
+.doc-field-label { font-size: 12px; font-weight: bold; flex-shrink: 0; color: #111; white-space: nowrap; }
+.doc-field-input {
+  flex: 1; background: transparent; border: none; border-bottom: 1px solid #888;
+  font-family: 'Courier New', monospace; font-size: 12px; color: #111;
+  outline: none; padding: 0 2px; min-width: 0;
+}
+.doc-field-input:focus { background: rgba(180,180,180,0.2); }
+
+/* Lines */
+.doc-paperline-el { width: 100%; height: 10px; background-image: url('paper_line.png'); background-size: 100% 100%; background-repeat: no-repeat; margin: 4px 0; }
+.doc-dottedline-el { width: 100%; height: 0; border-top: 1px dashed #777; margin: 6px 0; }
+
+/* Checkbox */
+.doc-checkbox-inner { display: flex; align-items: flex-start; gap: 6px; width: 100%; }
+.custom-check-icon {
+  width: 13px; height: 13px; cursor: pointer; flex-shrink: 0;
+  background-image: url('unchecked.png'); background-size: cover; margin-top: 1px;
+}
+.custom-check-icon.checked { background-image: url('checked.png'); }
+
+/* Signature */
+.doc-sig-wrap { border: 1px dashed #888; padding: 6px 8px; width: 100%; }
+.doc-sig-uid { font-size: 8px; color: #777; display: block; margin-bottom: 3px; }
+.doc-signature {
+  font-family: 'ChopinScript', cursive; font-size: 24px; color: #000;
+  background: transparent; border: none; border-bottom: 1px solid #333;
+  width: 100%; outline: none;
+}
+
+/* Image */
+.doc-img { display: block; max-width: 80%; margin: 4px auto; }
+.doc-img-url { width: 100%; font-size: 10px; color: #558; background: transparent; border: none; outline: none; font-family: 'Courier New', monospace; text-align: center; padding: 2px 0; }
+.doc-img-url:focus { background: rgba(180,180,180,0.2); }
+
+/* Overlays */
+.ov { position: absolute; pointer-events: none; display: none; }
+.ov-bg-logo    { top:50%; left:50%; transform:translate(-50%,-50%); width:70%; opacity:0.08; z-index:1; }
+.ov-hdr-logo   { top:20px; right:20px; width:80px; opacity:0.9; z-index:2; }
+.ov-watermark  { top:50%; left:50%; transform:translate(-50%,-50%); width:85%; opacity:0.15; z-index:3; }
+.ov-declassify { top:40%; left:50%; transform:translate(-50%,-50%); width:70%; opacity:0.25; z-index:4; }
+.ov-classified { top:50%; left:50%; transform:translate(-50%,-50%); width:80%; opacity:0.15; z-index:4; }
+.ov-pin        { top:8px; right:14px; width:26px; z-index:100; }
+.ov-lock       { top:8px; left:14px; width:22px; z-index:100; }
+.ov-sticker    { bottom:20px; right:20px; width:70px; z-index:100; }
+
+/* ══ TOOLBAR ══ */
+.toolbar-pane {
+  width: 300px; background: linear-gradient(180deg, rgba(18,26,43,0.98), rgba(13,19,31,0.98));
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+.tb-section { padding: 12px 12px; border-bottom: 1px solid rgba(66,84,116,0.4); }
+.tb-title { font-size: 10px; font-weight: bold; color: #a9bcdd; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+.tb-input {
+  width: 100%; background: rgba(9,15,27,0.96); color: #fff; border: 1px solid var(--border);
+  padding: 8px 10px; font-size: 11px; font-family: 'Courier New', monospace; margin-bottom: 6px;
+  border-radius: 10px;
+}
+.tb-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 2px rgba(122,183,255,0.14); }
+.tool-btn {
+  display: block; width: 100%; background: rgba(10,16,28,0.95); color: var(--text);
+  border: 1px solid var(--border); padding: 8px 10px; margin-bottom: 6px;
+  text-align: left; font-size: 11px; cursor: pointer; font-family: 'Courier New', monospace;
+  border-radius: 10px;
+}
+.tool-btn:hover { background: rgba(28,41,64,0.95); border-color: rgba(122,183,255,0.45); }
+.tool-btn.red { border-color: rgba(255,111,125,0.35); color: #ff9aa5; }
+.tool-btn.red:hover { background: rgba(255,111,125,0.12); }
+.chk-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 11px; cursor: pointer; }
+.page-nav { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 8px; }
+.page-nav-lbl { font-size: 10px; color: #9db2d3; text-align: center; flex: 1; }
+.note-text { font-size: 10px; color: #8fa0bf; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- ══ NEW DOCUMENT MODAL ══ -->
+<div class="modal-overlay" id="modal-newdoc">
+  <div class="modal-box" style="max-width:560px;">
+    <div class="modal-title">
+      New Document — Choose Type
+      <button class="modal-close" onclick="closeModal('modal-newdoc')">✕</button>
+    </div>
+    <div class="type-list" id="type-list"></div>
+  </div>
+</div>
+
+<!-- ══ DRAFTS MODAL ══ -->
+<div class="modal-overlay" id="modal-drafts">
+  <div class="modal-box" style="max-width:500px;">
+    <div class="modal-title">
+      Saved Drafts
+      <button class="modal-close" onclick="closeModal('modal-drafts')">✕</button>
+    </div>
+    <div id="drafts-list"></div>
+  </div>
+</div>
+
+<!-- ══ TOP BAR ══ -->
+<div class="top-bar">
+  <span class="top-title">Document Edit</span>
+  <button class="btn-top" onclick="openNewDocModal()">New Document</button>
+  <button class="btn-top active" onclick="saveDraft()">Save as Draft</button>
+  <button class="btn-top" onclick="openDraftsModal()">Load Draft</button>
+  <button class="btn-top" onclick="exportDat()">Export .dat</button>
+  <button class="btn-top" onclick="document.getElementById('import-file').click()">Import .dat</button>
+  <input type="file" id="import-file" accept=".dat,.json" style="display:none" onchange="importDat(event)">
+  <div class="spacer"></div>
+  <button class="btn-top" onclick="duplicatePage()">Duplicate Page</button>
+</div>
+
+<!-- ══ WORKSPACE ══ -->
+<div class="workspace">
+  <div class="document-pane">
+    <div class="document-page" id="document-content">
+      <img src="scp_logo.png"               class="ov ov-bg-logo"    id="ov-scp-bg">
+      <img src="scp_logo_header.png"        class="ov ov-hdr-logo"   id="ov-scp-header">
+      <img src="confidential_watermark.png" class="ov ov-watermark"  id="ov-confidential">
+      <img src="ec_declassified_2.png"      class="ov ov-declassify" id="ov-declassified">
+      <img src="sc_classified.png"          class="ov ov-classified" id="ov-stamp">
+      <img src="pinned.png"                 class="ov ov-pin"        id="ov-pin">
+      <img src="padlock.png"                class="ov ov-lock"       id="ov-lock">
+      <img src="sticker_label.png"          class="ov ov-sticker"    id="ov-sticker">
+    </div>
+  </div>
+
+  <div class="toolbar-pane">
+    <div class="tb-section">
+      <div class="tb-title">Title</div>
+      <input type="text" id="tb-title" class="tb-input" placeholder="Document Title">
+    </div>
+
+    <div class="tb-section">
+      <div class="tb-title">Insert</div>
+      <button class="tool-btn" onclick="addElement('header')">New Header</button>
+      <button class="tool-btn" onclick="addElement('header2')">New Header (2)</button>
+      <button class="tool-btn" onclick="addElement('header3')">New Header (3)</button>
+      <button class="tool-btn" onclick="addElement('paragraph')">New Paragraph</button>
+      <button class="tool-btn" onclick="addElement('smalltext')">New Smalltext</button>
+      <button class="tool-btn" onclick="addElement('line')">New Line</button>
+      <button class="tool-btn" onclick="addElement('dottedline')">New Dotted Line</button>
+      <button class="tool-btn" onclick="addElement('signature')">New Signature Box</button>
+      <button class="tool-btn" onclick="addElement('image')">New Image</button>
+      <button class="tool-btn" onclick="addElement('checkbox')">New Checkbox</button>
+    </div>
+
+    <!--<div class="tb-section">
+      <div class="tb-title">NOTE</div>
+      <p class="note-text">Redacted text can look different in other instances of this file. Text may be partially visible.</p>
+      <br>
+      <button class="tool-btn" onclick="alert('Redact Selected Text')">Redact Selected Text</button>
+      <button class="tool-btn" onclick="alert('Un-Redact Selected Text')">Un-Redact Selected Text</button>
+    </div>
+
+    <div class="tb-section">
+      <div class="tb-title">Visual Overlays</div>
+      <label class="chk-row"><input type="checkbox" id="chk-scp-bg"      onchange="toggleOverlay('ov-scp-bg',this.checked)">      SCP BG Logo</label>
+      <label class="chk-row"><input type="checkbox" id="chk-scp-header"  onchange="toggleOverlay('ov-scp-header',this.checked)">  SCP Header Logo</label>
+      <label class="chk-row"><input type="checkbox" id="chk-confidential" onchange="toggleOverlay('ov-confidential',this.checked)"> Confidential</label>
+      <label class="chk-row"><input type="checkbox" id="chk-declassified" onchange="toggleOverlay('ov-declassified',this.checked)"> Declassified</label>
+      <label class="chk-row"><input type="checkbox" id="chk-stamp"        onchange="toggleOverlay('ov-stamp',this.checked)">       SC Classified</label>
+      <label class="chk-row"><input type="checkbox" id="chk-pin"          onchange="toggleOverlay('ov-pin',this.checked)">         Pin</label>
+      <label class="chk-row"><input type="checkbox" id="chk-lock"         onchange="toggleOverlay('ov-lock',this.checked)">        Padlock</label>
+      <label class="chk-row"><input type="checkbox" id="chk-sticker"      onchange="toggleOverlay('ov-sticker',this.checked)">     Sticker</label>
+    </div>
+
+    <div class="tb-section">
+      <div class="tb-title">Settings</div>
+      <label class="chk-row">
+        <input type="checkbox" id="chk-digital"> Use Digital Checkboxes
+      </label>
+    </div>-->
+
+    <div class="tb-section" style="border-bottom:none;">
+      <button class="tool-btn" onclick="addPage()">New Page</button>
+      <button class="tool-btn" onclick="movePage(-1)">Move Page Earlier</button>
+      <button class="tool-btn" onclick="movePage(1)">Move Page Later</button>
+      <button class="tool-btn red" onclick="deletePage()">Delete Page</button>
+      <div class="page-nav">
+        <button class="tool-btn" style="width:38px;text-align:center;" onclick="prevPage()">«</button>
+        <span class="page-nav-lbl" id="page-indicator">Page 1 of 1</span>
+        <button class="tool-btn" style="width:38px;text-align:center;" onclick="nextPage()">»</button>
+      </div>
+      <div style="margin-top:8px;">
+        <select class="tb-input" id="jump-select" onchange="jumpTo(this.value)" style="margin:0;">
+          <option value="">Jump to page...</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DOCUMENT TEMPLATES
+══════════════════════════════════════════ */
+const TEMPLATES = {};
+const TEMPLATE_ORDER = [];
+
+function registerTemplate(key, label, desc, build) {
+  TEMPLATES[key] = { key, label, desc, build };
+  TEMPLATE_ORDER.push(key);
+}
+
+registerTemplate('default', 'Default', 'Basic empty document.', () => ({
+  type:'default',
+  fields:{title:'Untitled Document'},
+  overlays:{},
+  pages:[{elements:[el('paragraph')],effects:[]}]
+}));
+
+registerTemplate('foundation_research_study', 'Foundation Research Study', 'Short research-style report.', () => ({
+  type:'foundation_research_study',
+  fields:{title:'Research Study'},
+  overlays:{'ov-scp-header':true},
+  pages:[{elements:[
+    el('header2','FOUNDATION RESEARCH STUDY'),
+    el('line'),
+    field('Researcher',''),
+    field('Date',''),
+    el('paragraph'),
+  ],effects:[]}]
+}));
+
+registerTemplate('foundation_report', 'Foundation Report', 'Short report template.', () => ({
+  type:'foundation_report',
+  fields:{title:'Foundation Report'},
+  overlays:{'ov-scp-header':true},
+  pages:[{elements:[
+    el('header2','FOUNDATION REPORT'),
+    el('line'),
+    field('Author',''),
+    field('Date',''),
+    el('paragraph'),
+  ],effects:[]}]
+}));
+
+registerTemplate('blank', 'Blank', 'Completely empty document.', () => ({
+  type:'blank', fields:{title:''}, overlays:{}, pages:[{elements:[],effects:[]}]
+}));
+
+registerTemplate('scp_file', 'SCP Object File', 'Standard containment record.', () => ({
+  type:'scp_file',
+  fields:{title:'SCP-XXXX'},
+  overlays:{'ov-scp-bg':true,'ov-scp-header':true},
+  pages:[{elements:[
+    el('header2','SCP-XXXX'),
+    el('line'),
+    field('Object Class',''),
+    field('Level',''),
+    field('Location',''),
+    el('line'),
+    el('header3','Special Containment Procedures:'),
+    el('paragraph'),
+    el('line'),
+    el('header3','Description:'),
+    el('paragraph'),
+    el('line'),
+    el('header3','Addendum:'),
+    el('paragraph'),
+  ],effects:[]}]
+}));
+
+registerTemplate('research', 'Research Document', 'Foundation research report.', () => ({
+  type:'research',
+  fields:{title:'Research Report'},
+  overlays:{'ov-scp-header':true},
+  pages:[{elements:[
+    el('header2','RESEARCH DEPARTMENT'),
+    el('line'),
+    field('Researcher',''),
+    field('Department',''),
+    field('Date',''),
+    field('Subject SCP',''),
+    el('line'),
+    el('header3','Objective:'),
+    el('paragraph'),
+    el('header3','Procedure:'),
+    el('paragraph'),
+    el('header3','Findings:'),
+    el('paragraph'),
+    el('header3','Conclusion:'),
+    el('paragraph'),
+    el('line'),
+    sig(),
+  ],effects:[]}]
+}));
+
+registerTemplate('personnel', 'Personnel File', 'Foundation staff record.', () => ({
+  type:'personnel',
+  fields:{title:'Personnel File'},
+  overlays:{},
+  pages:[{elements:[
+    field('Full Name',''),
+    field('Clearance Level',''),
+    field('Department',''),
+    field('Site Assignment',''),
+    field('Status','Active'),
+    field('Date of Hire',''),
+    el('line'),
+    el('header3','Personnel Notes:'),
+    el('paragraph'),
+    el('line'),
+    el('header3','Assignment History:'),
+    el('paragraph'),
+    el('line'),
+    sig(),
+  ],effects:[]}]
+}));
+
+registerTemplate('incident', 'Incident Report', 'Security or containment incident.', () => ({
+  type:'incident',
+  fields:{title:'Incident Report'},
+  overlays:{},
+  pages:[{elements:[
+    field('Incident Date',''),
+    field('Location/Site',''),
+    field('Threat Level',''),
+    field('Reporting Officer',''),
+    el('line'),
+    el('header3','Incident Description:'),
+    el('paragraph'),
+    el('header3','Involved Personnel:'),
+    el('paragraph'),
+    el('header3','Response Actions:'),
+    el('paragraph'),
+    el('header3','Outcome:'),
+    el('paragraph'),
+    el('line'),
+    sig(),
+  ],effects:[]}]
+}));
+
+registerTemplate('camera_roll', 'Camera Roll', 'Photographic evidence document.', () => ({
+  type:'camera_roll',
+  fields:{title:'Camera Roll #'},
+  overlays:{},
+  pages:[{elements:[
+    field('Date',''),
+    field('Photographer',''),
+    el('line'),
+    el('header3','Info:'),
+    el('paragraph'),
+    imgEl(),
+  ],effects:[]}]
+}));
+
+function el(type, content='') {
+  return { type, content, params:{}, args:{} };
+}
+function sig() {
+  return { type:'signature', uid: Math.floor(Math.random()*1e9), params:{}, args:{} };
+}
+function imgEl() {
+  return { type:'image', content:'', params:{ align:0.5, scale:1.0 }, args:{ url:'' } };
+}
+
+/* Build the type grid inside the modal */
+function buildTypeGrid() {
+  const list = document.getElementById('type-list');
+  list.innerHTML = '';
+  TEMPLATE_ORDER.forEach(key => {
+    const tmpl = TEMPLATES[key];
+    const btn = document.createElement('button');
+    btn.className = 'type-option';
+    btn.type = 'button';
+    btn.innerHTML = `
+      <div class="type-option-name">${tmpl.label}</div>
+      <div class="type-option-desc">${tmpl.desc}</div>
+    `;
+    btn.onclick = () => {
+      const base = tmpl.build();
+      currentDoc = {
+        uploaded: ts(), draftId: Math.floor(Math.random()*1e13),
+        copiedFromCreator:'Unknown', settings:[], allowScanning:true, signatures:[],
+        date: ts(), ...base
+      };
+      currentPageIndex = 0;
+      closeModal('modal-newdoc');
+      renderDocument();
+    };
+    list.appendChild(btn);
+  });
+}
+
+/* ══════════════════════════════════════════
+   STORAGE
+══════════════════════════════════════════ */
+const STORAGE_META = 'scp_drafts_meta';
+function draftKey(id) { return 'scp_draft_' + id; }
+
+function getDraftsMeta() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_META) || '[]'); } catch { return []; }
+}
+
+function saveDraft(silent = false) {
+  currentDoc.date = ts();
+  // Sync title from input
+  currentDoc.fields.title = document.getElementById('tb-title').value;
+  // Save full doc
+  localStorage.setItem(draftKey(currentDoc.draftId), JSON.stringify(currentDoc));
+  // Update meta list
+  let meta = getDraftsMeta();
+  const entry = { draftId: currentDoc.draftId, title: currentDoc.fields.title, type: currentDoc.type, date: currentDoc.date };
+  const idx = meta.findIndex(m => m.draftId === currentDoc.draftId);
+  if (idx >= 0) meta[idx] = entry; else meta.unshift(entry);
+  localStorage.setItem(STORAGE_META, JSON.stringify(meta));
+  if (!silent) {
+    const btn = [...document.querySelectorAll('.btn-top')].find(b => b.textContent === 'Save as Draft');
+    if (btn) { const orig = btn.textContent; btn.textContent = 'Saved ✓'; setTimeout(()=>btn.textContent=orig, 1200); }
+  }
+}
+
+function queueAutoSave() {
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => saveDraft(true), 350);
+}
+
+function loadDraftById(draftId) {
+  try {
+    const raw = localStorage.getItem(draftKey(draftId));
+    if (!raw) return alert('Draft not found.');
+    currentDoc = JSON.parse(raw);
+    if (!currentDoc.fields) currentDoc.fields = { title: 'Imported' };
+    if (!currentDoc.overlays) currentDoc.overlays = {};
+    currentPageIndex = 0;
+    closeModal('modal-drafts');
+    renderDocument();
+  } catch { alert('Error loading draft.'); }
+}
+
+function deleteDraftById(draftId) {
+  if (!confirm('Delete this draft permanently?')) return;
+  localStorage.removeItem(draftKey(draftId));
+  let meta = getDraftsMeta();
+  meta = meta.filter(m => m.draftId !== draftId);
+  localStorage.setItem(STORAGE_META, JSON.stringify(meta));
+  openDraftsModal(); // refresh
+}
+
+/* ══════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openNewDocModal() {
+  buildTypeGrid();
+  openModal('modal-newdoc');
+}
+
+function openDraftsModal() {
+  const list = document.getElementById('drafts-list');
+  const meta = getDraftsMeta();
+  list.innerHTML = '';
+  if (meta.length === 0) {
+    list.innerHTML = '<div class="no-drafts">No saved drafts yet. Use "Save as Draft" to save your work.</div>';
+  } else {
+    meta.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'draft-item';
+      row.innerHTML = `
+        <div class="draft-item-info">
+          <div class="draft-item-title">${m.title || 'Untitled'}</div>
+          <div class="draft-item-meta">${fmtDate(m.date)} · ID: ${m.draftId}</div>
+        </div>
+        <span class="draft-type-badge">${m.type || 'doc'}</span>
+        <button class="draft-btn" onclick="loadDraftById(${m.draftId})">Load</button>
+        <button class="draft-btn danger" onclick="deleteDraftById(${m.draftId})">Delete</button>
+      `;
+      list.appendChild(row);
+    });
+  }
+  openModal('modal-drafts');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+let currentDoc = newEmptyDoc();
+let currentPageIndex = 0;
+let autosaveTimer = null;
+
+function newEmptyDoc() {
+  return {
+    uploaded: ts(), draftId: Math.floor(Math.random()*1e13),
+    copiedFromCreator:'Unknown', settings:[], allowScanning:true,
+    signatures:[], type:'document', overlays:{},
+    pages:[{elements:[],effects:[]}],
+    fields:{title:'Untitled Document'}, date: ts()
+  };
+}
+
+function autoResize(ta) {
+  ta.style.height = '0';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+function renderDocument() {
+  document.getElementById('tb-title').value = currentDoc.fields?.title || '';
+  applyOverlayCheckboxes();
+
+  const page = currentDoc.pages[currentPageIndex];
+  const contentDiv = document.getElementById('document-content');
+
+  // Remove non-overlay children
+  Array.from(contentDiv.children).forEach(c => { if (!c.id.startsWith('ov-')) c.remove(); });
+  if (!page) return;
+
+  // Title block
+  const titleSec = document.createElement('div');
+  titleSec.className = 'title-section';
+  const titleTa = document.createElement('textarea');
+  titleTa.className = 'doc-title-input';
+  titleTa.rows = 1;
+  titleTa.value = currentDoc.fields?.title || '';
+  titleTa.oninput = e => {
+    currentDoc.fields.title = e.target.value;
+    document.getElementById('tb-title').value = e.target.value;
+    autoResize(titleTa);
+    queueAutoSave();
+  };
+  titleSec.appendChild(titleTa);
+  titleSec.appendChild(Object.assign(document.createElement('div'), { className:'title-line' }));
+  contentDiv.appendChild(titleSec);
+  setTimeout(() => autoResize(titleTa), 10);
+
+  // Elements
+  page.elements.forEach((el, i) => {
+    contentDiv.appendChild(buildElementNode(el, i, page.elements));
+  });
+
+  // Footer
+  const footer = document.createElement('div');
+  footer.className = 'page-footer';
+  footer.textContent = `Page ${currentPageIndex+1} of ${currentDoc.pages.length}`;
+  contentDiv.appendChild(footer);
+
+  // Sidebar page controls
+  document.getElementById('page-indicator').textContent = `Page ${currentPageIndex+1} of ${currentDoc.pages.length}`;
+  const jmp = document.getElementById('jump-select');
+  jmp.innerHTML = '<option value="">Jump to page...</option>';
+  currentDoc.pages.forEach((_, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = `Page ${i+1}`; jmp.appendChild(o);
+  });
+  queueAutoSave();
+}
+
+function buildElementNode(el, index, elements) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'doc-element-wrapper';
+
+  if (el.type === 'line') {
+    wrapper.appendChild(Object.assign(document.createElement('div'), { className:'doc-paperline-el' }));
+  }
+  else if (el.type === 'dottedline') {
+    wrapper.appendChild(Object.assign(document.createElement('div'), { className:'doc-dottedline-el' }));
+  }
+  else if (el.type === 'image') {
+    const img = Object.assign(document.createElement('img'), {
+      className: 'doc-img', src: el.args?.url || ''
+    });
+    img.style.display = el.args?.url ? 'block' : 'none';
+
+    const inp = Object.assign(document.createElement('input'), {
+      className: 'doc-img-url', placeholder: 'Image URL...',
+      value: el.args?.url || '', type: 'text'
+    });
+    inp.oninput = e => {
+      el.args.url = e.target.value;
+      img.src = e.target.value;
+      img.style.display = e.target.value ? 'block' : 'none';
+      queueAutoSave();
+    };
+    wrapper.appendChild(img);
+    wrapper.appendChild(inp);
+  }
+  else if (el.type === 'field') {
+    const row = document.createElement('div');
+    row.className = 'doc-field-row';
+    const lbl = Object.assign(document.createElement('span'), {
+      className: 'doc-field-label',
+      textContent: (el.args?.label || 'Field') + ':'
+    });
+    const inp = Object.assign(document.createElement('input'), {
+      className: 'doc-field-input',
+      value: el.args?.value || '',
+      placeholder: '—'
+    });
+    inp.oninput = e => { el.args.value = e.target.value; queueAutoSave(); };
+    row.appendChild(lbl); row.appendChild(inp);
+    wrapper.appendChild(row);
+  }
+  else if (el.type === 'checkbox') {
+    const inner = document.createElement('div');
+    inner.className = 'doc-checkbox-inner';
+    const icon = document.createElement('div');
+    icon.className = 'custom-check-icon';
+    if (el.params?.toggle) icon.classList.add('checked');
+    icon.onclick = () => { el.params.toggle = !el.params.toggle; icon.classList.toggle('checked'); queueAutoSave(); };
+    const inp = Object.assign(document.createElement('input'), {
+      className: 'doc-input doc-paragraph',
+      value: el.args?.text || el.content || ''
+    });
+    inp.oninput = e => el.args.text = e.target.value;
+    inner.appendChild(icon); inner.appendChild(inp);
+    wrapper.appendChild(inner);
+  }
+  else if (el.type === 'signature') {
+    const wrap = document.createElement('div'); wrap.className = 'doc-sig-wrap';
+    const uid = Object.assign(document.createElement('span'), {
+      className: 'doc-sig-uid', textContent: `UID: ${el.uid || 0}`
+    });
+    const inp = Object.assign(document.createElement('input'), {
+      className: 'doc-signature', placeholder: 'Sign here...',
+      value: el.content || ''
+    });
+    inp.oninput = e => { el.content = e.target.value; queueAutoSave(); };
+    wrap.appendChild(uid); wrap.appendChild(inp);
+    wrapper.appendChild(wrap);
+  }
+  else {
+    // text types
+    const ta = document.createElement('textarea');
+    ta.rows = 1; ta.value = el.content || ''; ta.style.width = '100%';
+    ta.className = 'doc-input ' + ({
+      header:'doc-header', header2:'doc-header2', header3:'doc-header3',
+      smalltext:'doc-smalltext'
+    }[el.type] || 'doc-paragraph');
+    ta.addEventListener('focus', () => wrapper.classList.add('editing'));
+    ta.addEventListener('blur',  () => wrapper.classList.remove('editing'));
+    ta.addEventListener('input', function() {
+      autoResize(this);
+      currentDoc.pages[currentPageIndex].elements[index].content = this.value;
+          queueAutoSave();
+});
+    wrapper.appendChild(ta);
+    setTimeout(() => autoResize(ta), 10);
+  }
+
+  wrapper.appendChild(buildControls(index, el.type, elements));
+  return wrapper;
+}
+
+/* ══════════════════════════════════════════
+   CONTROLS (hover-only, float over element)
+══════════════════════════════════════════ */
+document.addEventListener('click', () => {
+  document.querySelectorAll('.type-picker-menu.open').forEach(m => m.classList.remove('open'));
+});
+
+function buildControls(index, type, elements) {
+  const c = document.createElement('div');
+  c.className = 'element-controls';
+
+  const TEXT_TYPES = ['header','header2','header3','paragraph','smalltext'];
+
+  // Type picker (text only)
+  if (TEXT_TYPES.includes(type)) {
+    const picker = document.createElement('div');
+    picker.className = 'type-picker';
+    const btn = document.createElement('button');
+    btn.className = 'type-picker-btn'; btn.title = 'Change type';
+    btn.innerHTML = '&#9660;';
+    const menu = document.createElement('div');
+    menu.className = 'type-picker-menu';
+    [['header','Header'],['header2','Header 2'],['header3','Header 3'],['paragraph','Paragraph'],['smalltext','Small Text']]
+      .forEach(([v,lbl]) => {
+        const o = document.createElement('button');
+        o.className = 'type-picker-opt' + (v===type?' active':'');
+        o.textContent = lbl;
+        o.onclick = e => { e.stopPropagation(); changeType(index,v); menu.classList.remove('open'); };
+        menu.appendChild(o);
+      });
+    btn.onclick = e => {
+      e.stopPropagation();
+      document.querySelectorAll('.type-picker-menu.open').forEach(m => m.classList.remove('open'));
+      menu.classList.toggle('open');
+    };
+    picker.appendChild(btn); picker.appendChild(menu);
+    c.appendChild(picker);
+  }
+
+  // Up
+  if (index > 0) {
+    const b = document.createElement('button');
+    b.className = 'ctrl-btn'; b.textContent = '↑'; b.title = 'Move up';
+    b.onclick = () => moveEl(index, -1); c.appendChild(b);
+  }
+  // Down
+  if (index < elements.length - 1) {
+    const b = document.createElement('button');
+    b.className = 'ctrl-btn'; b.textContent = '↓'; b.title = 'Move down';
+    b.onclick = () => moveEl(index, 1); c.appendChild(b);
+  }
+  // Delete
+  const d = document.createElement('button');
+  d.className = 'ctrl-btn del'; d.textContent = '✕'; d.title = 'Delete';
+  d.onclick = () => delEl(index); c.appendChild(d);
+
+  return c;
+}
+
+/* ══════════════════════════════════════════
+   MUTATIONS
+══════════════════════════════════════════ */
+function addElement(type) {
+  let newEl = el(type);
+  if (type==='checkbox') { newEl.params={toggle:false}; newEl.args={text:''}; }
+  else if (type==='signature') { newEl.uid=Math.floor(Math.random()*1e9); }
+  else if (type==='image') { newEl.args={url:''}; newEl.params={align:0.5,scale:1}; }
+  else if (type==='field') { newEl.args={label:'Label',value:''}; }
+  currentDoc.pages[currentPageIndex].elements.push(newEl);
+  renderDocument();
+  queueAutoSave();
+}
+
+function moveEl(i, d) {
+  const els = currentDoc.pages[currentPageIndex].elements;
+  const j = i+d;
+  if (j>=0 && j<els.length) { [els[i],els[j]]=[els[j],els[i]]; renderDocument(); queueAutoSave(); }
+}
+
+function delEl(i) {
+  currentDoc.pages[currentPageIndex].elements.splice(i,1);
+  renderDocument();
+  queueAutoSave();
+}
+
+function changeType(i, t) {
+  currentDoc.pages[currentPageIndex].elements[i].type = t;
+  renderDocument();
+  queueAutoSave();
+}
+
+/* ══════════════════════════════════════════
+   OVERLAYS
+══════════════════════════════════════════ */
+const OVERLAY_MAP = {
+  'ov-scp-bg':'chk-scp-bg','ov-scp-header':'chk-scp-header',
+  'ov-confidential':'chk-confidential','ov-declassified':'chk-declassified',
+  'ov-stamp':'chk-stamp','ov-pin':'chk-pin','ov-lock':'chk-lock','ov-sticker':'chk-sticker'
+};
+
+function toggleOverlay(id, visible) {
+  document.getElementById(id).style.display = visible ? 'block' : 'none';
+  if (!currentDoc.overlays) currentDoc.overlays = {};
+  currentDoc.overlays[id] = visible;
+}
+
+function applyOverlayCheckboxes() {
+  const ov = currentDoc.overlays || {};
+  Object.entries(OVERLAY_MAP).forEach(([ovId, chkId]) => {
+    const visible = !!ov[ovId];
+    document.getElementById(ovId).style.display = visible ? 'block' : 'none';
+    const chk = document.getElementById(chkId);
+    if (chk) chk.checked = visible;
+  });
+}
+
+/* ══════════════════════════════════════════
+   PAGES
+══════════════════════════════════════════ */
+function addPage()       { currentDoc.pages.push({elements:[],effects:[]}); currentPageIndex=currentDoc.pages.length-1; renderDocument(); }
+function duplicatePage() {
+  const pg = JSON.parse(JSON.stringify(currentDoc.pages[currentPageIndex]));
+  currentDoc.pages.splice(currentPageIndex+1,0,pg); currentPageIndex++; renderDocument();
+}
+function deletePage() {
+  if (currentDoc.pages.length < 2) {
+    currentDoc.pages[0] = {elements:[],effects:[]};
+    currentPageIndex = 0;
+    renderDocument();
+    queueAutoSave();
+    return;
+  }
+  currentDoc.pages.splice(currentPageIndex,1);
+  if (currentPageIndex>=currentDoc.pages.length) currentPageIndex=currentDoc.pages.length-1;
+  renderDocument();
+  queueAutoSave();
+}
+function nextPage() { if (currentPageIndex<currentDoc.pages.length-1){currentPageIndex++;renderDocument();queueAutoSave();} }
+function prevPage() { if (currentPageIndex>0){currentPageIndex--;renderDocument();queueAutoSave();} }
+function jumpTo(v)  { if (v!==''){currentPageIndex=parseInt(v);renderDocument();queueAutoSave();} }
+function movePage(delta) {
+  const j = currentPageIndex + delta;
+  if (j < 0 || j >= currentDoc.pages.length) return;
+  [currentDoc.pages[currentPageIndex], currentDoc.pages[j]] = [currentDoc.pages[j], currentDoc.pages[currentPageIndex]];
+  currentPageIndex = j;
+  renderDocument();
+  queueAutoSave();
+}
+
+/* ══════════════════════════════════════════
+   FILE I/O
+══════════════════════════════════════════ */
+document.getElementById('tb-title').addEventListener('input', e => {
+  currentDoc.fields.title = e.target.value; renderDocument(); queueAutoSave();
+});
+
+function exportDat() {
+  currentDoc.date = ts();
+  const blob = new Blob([JSON.stringify(currentDoc,null,2)],{type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'),{href:url, download:(currentDoc.draftId||'doc')+'.dat'});
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function importDat(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      currentDoc = JSON.parse(e.target.result);
+      if (!currentDoc.fields) currentDoc.fields = {title:'Imported'};
+      if (!currentDoc.overlays) currentDoc.overlays = {};
+      currentPageIndex = 0; renderDocument();
+    } catch { alert('Error parsing file.'); }
+  };
+  reader.readAsText(file); event.target.value='';
+}
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function ts() { return Math.floor(Date.now()/1000); }
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts*1000);
+  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+}
+
+renderDocument();
+window.addEventListener('beforeunload', () => saveDraft(true));
+</script>
+</body>
+</html>
