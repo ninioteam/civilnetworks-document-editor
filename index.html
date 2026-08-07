@@ -460,8 +460,6 @@ registerTemplate('foundation_research_study', 'Foundation Research Study', 'Shor
   pages:[{elements:[
     el('header2','FOUNDATION RESEARCH STUDY'),
     el('line'),
-    field('Researcher',''),
-    field('Date',''),
     el('paragraph'),
   ],effects:[]}]
 }));
@@ -473,119 +471,7 @@ registerTemplate('foundation_report', 'Foundation Report', 'Short report templat
   pages:[{elements:[
     el('header2','FOUNDATION REPORT'),
     el('line'),
-    field('Author',''),
-    field('Date',''),
     el('paragraph'),
-  ],effects:[]}]
-}));
-
-registerTemplate('blank', 'Blank', 'Completely empty document.', () => ({
-  type:'blank', fields:{title:''}, overlays:{}, pages:[{elements:[],effects:[]}]
-}));
-
-registerTemplate('scp_file', 'SCP Object File', 'Standard containment record.', () => ({
-  type:'scp_file',
-  fields:{title:'SCP-XXXX'},
-  overlays:{'ov-scp-bg':true,'ov-scp-header':true},
-  pages:[{elements:[
-    el('header2','SCP-XXXX'),
-    el('line'),
-    field('Object Class',''),
-    field('Level',''),
-    field('Location',''),
-    el('line'),
-    el('header3','Special Containment Procedures:'),
-    el('paragraph'),
-    el('line'),
-    el('header3','Description:'),
-    el('paragraph'),
-    el('line'),
-    el('header3','Addendum:'),
-    el('paragraph'),
-  ],effects:[]}]
-}));
-
-registerTemplate('research', 'Research Document', 'Foundation research report.', () => ({
-  type:'research',
-  fields:{title:'Research Report'},
-  overlays:{'ov-scp-header':true},
-  pages:[{elements:[
-    el('header2','RESEARCH DEPARTMENT'),
-    el('line'),
-    field('Researcher',''),
-    field('Department',''),
-    field('Date',''),
-    field('Subject SCP',''),
-    el('line'),
-    el('header3','Objective:'),
-    el('paragraph'),
-    el('header3','Procedure:'),
-    el('paragraph'),
-    el('header3','Findings:'),
-    el('paragraph'),
-    el('header3','Conclusion:'),
-    el('paragraph'),
-    el('line'),
-    sig(),
-  ],effects:[]}]
-}));
-
-registerTemplate('personnel', 'Personnel File', 'Foundation staff record.', () => ({
-  type:'personnel',
-  fields:{title:'Personnel File'},
-  overlays:{},
-  pages:[{elements:[
-    field('Full Name',''),
-    field('Clearance Level',''),
-    field('Department',''),
-    field('Site Assignment',''),
-    field('Status','Active'),
-    field('Date of Hire',''),
-    el('line'),
-    el('header3','Personnel Notes:'),
-    el('paragraph'),
-    el('line'),
-    el('header3','Assignment History:'),
-    el('paragraph'),
-    el('line'),
-    sig(),
-  ],effects:[]}]
-}));
-
-registerTemplate('incident', 'Incident Report', 'Security or containment incident.', () => ({
-  type:'incident',
-  fields:{title:'Incident Report'},
-  overlays:{},
-  pages:[{elements:[
-    field('Incident Date',''),
-    field('Location/Site',''),
-    field('Threat Level',''),
-    field('Reporting Officer',''),
-    el('line'),
-    el('header3','Incident Description:'),
-    el('paragraph'),
-    el('header3','Involved Personnel:'),
-    el('paragraph'),
-    el('header3','Response Actions:'),
-    el('paragraph'),
-    el('header3','Outcome:'),
-    el('paragraph'),
-    el('line'),
-    sig(),
-  ],effects:[]}]
-}));
-
-registerTemplate('camera_roll', 'Camera Roll', 'Photographic evidence document.', () => ({
-  type:'camera_roll',
-  fields:{title:'Camera Roll #'},
-  overlays:{},
-  pages:[{elements:[
-    field('Date',''),
-    field('Photographer',''),
-    el('line'),
-    el('header3','Info:'),
-    el('paragraph'),
-    imgEl(),
   ],effects:[]}]
 }));
 
