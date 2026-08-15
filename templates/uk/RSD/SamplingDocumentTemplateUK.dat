@@ -1,0 +1,582 @@
+{
+  "uploaded": 1786294398,
+  "draftId": 7039520027091,
+  "copiedFromCreator": "The Administrator (Ventz)",
+  "approvedBy": "76561198029085201",
+  "allowScanning": true,
+  "settings": {
+    "noCheckboxWhenStickied": false,
+    "singleSign": false
+  },
+  "approvedRating": 1,
+  "type": "foundation_report",
+  "fields": {
+    "title": "SCP-XXXX Sampling Document"
+  },
+  "clearance": 1,
+  "date": 1786803483,
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "image",
+          "content": "New Image",
+          "params": {
+            "align": 0.5,
+            "scale": 0.75
+          },
+          "args": {
+            "url": "https://images.civilservers.net/imgs/566c7a917810f08d.png"
+          }
+        },
+        {
+          "content": "",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "",
+              "content": ""
+            },
+            "typewriter_51:635": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "    Sampling Document",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "    Sampling Document",
+              "content": "    Sampling Document"
+            },
+            "typewriter_51:635": {
+              "result": "    Sampling Document",
+              "content": "    Sampling Document"
+            }
+          }
+        },
+        {
+          "content": "                                Version: 1.0",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "                                Version: 1.0",
+              "content": "                                Version: 1.0"
+            },
+            "typewriter_21:635": {
+              "result": "                                Version: 1.0",
+              "content": "                                Version: 1.0"
+            }
+          }
+        },
+        {
+          "content": "",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "",
+              "content": ""
+            },
+            "typewriter_51:635": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "This unified sampling document is a clearance level 1 document. The following personnel may sign sampling documents:\n\n- Researchers (Up to their own clearance),\n- Site Administration, Foundation Command (and their assistants),\n- Medical Consultants+ when required for medical purposes.\n\nAuthorization can be given for a maximum of >3< liters. Expiration: Research >7< days, otherwise >3< days.",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "This unified sampling document is a clearance level 1 \ndocument. The following personnel may sign sampling \ndocuments:\n\n- Researchers (Up to their own clearance),\n- Site Administration, Foundation Command (and their \nassistants),\n- Medical Consultants+ when required for medical purposes.\n\nAuthorization can be given for a maximum of >3< liters. \nExpiration: Research >7< days, otherwise >3< days.",
+              "content": "This unified sampling document is a clearance level 1 document. The following personnel may sign sampling documents:\n\n- Researchers (Up to their own clearance),\n- Site Administration, Foundation Command (and their assistants),\n- Medical Consultants+ when required for medical purposes.\n\nAuthorization can be given for a maximum of >3< liters. Expiration: Research >7< days, otherwise >3< days."
+            },
+            "typewriter_21:635": {
+              "result": "This unified sampling document is a clearance level 1 \ndocument. The following personnel may sign sampling \ndocuments:\n\n- Researchers (Up to their own clearance),\n- Site Administration, Foundation Command (and their \nassistants),\n- Medical Consultants+ when required for medical \npurposes.\n\nAuthorization can be given for a maximum of >3< liters. \nExpiration: Research >7< days, otherwise >3< days.",
+              "content": "This unified sampling document is a clearance level 1 document. The following personnel may sign sampling documents:\n\n- Researchers (Up to their own clearance),\n- Site Administration, Foundation Command (and their assistants),\n- Medical Consultants+ when required for medical purposes.\n\nAuthorization can be given for a maximum of >3< liters. Expiration: Research >7< days, otherwise >3< days."
+            }
+          }
+        }
+      ],
+      "effects": []
+    },
+    {
+      "elements": [
+        {
+          "content": "",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "Sampling Amount: X Liter",
+          "args": [],
+          "type": "header2",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_30:425": {
+              "result": "Sampling Amount: 3 Liter",
+              "content": "Sampling Amount: 3 Liter"
+            }
+          }
+        },
+        {
+          "content": "Maximum: 3 Liters.",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "Maximum: 3 Liters.",
+              "content": "Maximum: 3 Liters."
+            }
+          }
+        },
+        {
+          "type": "line",
+          "content": "New Line",
+          "params": [],
+          "args": []
+        },
+        {
+          "content": "SCP-Designation: SCP-XXXX",
+          "args": [],
+          "type": "header2",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_30:425": {
+              "result": "SCP-Designation: \nSCP-9000-2",
+              "content": "SCP-Designation: SCP-9000-2"
+            }
+          }
+        },
+        {
+          "content": "May only sign up to their own clearance level. SCP-999, 912, 073, 2295, 22415 do require neither document nor consent.",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "May only sign up to their own clearance level. SCP-999, 912, \n073, 2295, 22415 do require neither document nor consent.",
+              "content": "May only sign up to their own clearance level. SCP-999, 912, 073, 2295, 22415 do require neither document nor consent."
+            }
+          }
+        },
+        {
+          "type": "line",
+          "content": "New Line",
+          "params": [],
+          "args": []
+        },
+        {
+          "content": "",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "Sampling Reason",
+          "args": [],
+          "type": "header2",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_30:425": {
+              "result": "Sampling Reason",
+              "content": "Sampling Reason"
+            }
+          }
+        },
+        {
+          "content": "To be able to cook chemicals that would help the site in some cases",
+          "args": [],
+          "type": "paragraph",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_21:425": {
+              "result": "To be able to cook chemicals that would\nhelp the site in some cases",
+              "content": "To be able to cook chemicals that would help the site in some cases"
+            }
+          }
+        }
+      ],
+      "effects": []
+    },
+    {
+      "elements": [
+        {
+          "content": "Threat Assessment",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "Threat Assessment",
+              "content": "Threat Assessment"
+            }
+          }
+        },
+        {
+          "content": "What bad thing could happened",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "SCP-9000-2 Primary Risks Include:\n - Killing the D-Class/Personal\n - Damage the D-Class/Personal",
+              "content": "SCP-9000-2 Primary Risks Include:\n - Killing the D-Class/Personal\n - Damage the D-Class/Personal"
+            }
+          }
+        }
+      ],
+      "effects": []
+    },
+    {
+      "elements": [
+        {
+          "content": "Specialised equipment checkbox",
+          "args": [],
+          "type": "header3",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_26:425": {
+              "result": "Specialised equipment checkbox",
+              "content": "Specialised equipment checkbox"
+            }
+          }
+        },
+        {
+          "content": "check what reaserchers, disposable and security personnel will require for a safe sampling.",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "check what reaserchers, disposable and security personnel \nwill require for a safe sampling.",
+              "content": "check what reaserchers, disposable and security personnel will require for a safe sampling."
+            }
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Scrambler Goggles"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Hazmat Suit"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Scranton Reality Anchor"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Night Vision"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Flare Gun"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Helemt Camera"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Radio"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Syringe"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Space Suit"
+          }
+        },
+        {
+          "type": "checkbox",
+          "content": "New Checkbox",
+          "params": {
+            "toggle": false,
+            "rightAlign": false
+          },
+          "args": {
+            "text": "Other:"
+          }
+        },
+        {
+          "content": "",
+          "args": [],
+          "type": "header3",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_26:425": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "Describe any other specialised equipment required here, if not listed above.",
+          "args": [],
+          "type": "paragraph",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_21:425": {
+              "result": "Describe any other specialised \nequipment required here, if not listed \nabove.",
+              "content": "Describe any other specialised equipment required here, if not listed above."
+            }
+          }
+        }
+      ],
+      "effects": []
+    },
+    {
+      "elements": [
+        {
+          "content": "",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "Date of Signature: XX/XX/XXXX",
+          "args": [],
+          "type": "header2",
+          "redacted": [
+            [
+              27,
+              30
+            ]
+          ],
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_30:425": {
+              "result": "Date of Signature: \n11/08/2026",
+              "content": "Date of Signature: 11/08/2026"
+            }
+          }
+        },
+        {
+          "type": "line",
+          "content": "New Line",
+          "params": [],
+          "args": []
+        },
+        {
+          "content": "Requester",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "Requester",
+              "content": "Requester"
+            }
+          }
+        },
+        {
+          "content": "personnel making the sampling request, may be the same as the authorizer.",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "personnel making the sampling request, may be the same as \nthe authorizer.",
+              "content": "personnel making the sampling request, may be the same as the authorizer."
+            }
+          }
+        },
+        {
+          "content": "New Signature Box",
+          "uid": 187844606,
+          "args": [],
+          "type": "signature",
+          "params": []
+        },
+        {
+          "content": "",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "Signatory: [Character Name]",
+          "args": [],
+          "type": "header2",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_30:425": {
+              "result": "Signatory: Harris Wills",
+              "content": "Signatory: Harris Wills"
+            }
+          }
+        },
+        {
+          "content": "- Nu-7, DEA, E-11, IE, IPD: May freely sample surface anomalies,\n- ISD, DEA, IE, IPD: CL4+ within their own department may sign off on SCP-939.",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "- Nu-7, DEA, E-11, IE, IPD: May freely sample surface \nanomalies,\n- ISD, DEA, IE, IPD: CL4+ within their own department may \nsign off on SCP-939.",
+              "content": "- Nu-7, DEA, E-11, IE, IPD: May freely sample surface anomalies,\n- ISD, DEA, IE, IPD: CL4+ within their own department may sign off on SCP-939."
+            }
+          }
+        },
+        {
+          "content": "New Signature Box",
+          "uid": 223788478,
+          "args": [],
+          "type": "signature",
+          "params": []
+        },
+        {
+          "content": "",
+          "args": [],
+          "type": "header",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_34:425": {
+              "result": "",
+              "content": ""
+            }
+          }
+        },
+        {
+          "content": "Void Signature",
+          "args": [],
+          "type": "header2",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_30:425": {
+              "result": "Void Signature",
+              "content": "Void Signature"
+            }
+          }
+        },
+        {
+          "content": "To invalidate after use, expired documents, missing clearance, invalid amount, or unacceptable reason. may be signed by the requester, any potensial authorizer or M.T.F Epsilon-11",
+          "args": [],
+          "type": "smalltext",
+          "params": [],
+          "_wrapCaches": {
+            "typewriter_14:425": {
+              "result": "To invalidate after use, expired documents, missing \nclearance, invalid amount, or unacceptable reason. may be \nsigned by the requester, any potensial authorizer or M.T.F \nEpsilon-11",
+              "content": "To invalidate after use, expired documents, missing clearance, invalid amount, or unacceptable reason. may be signed by the requester, any potensial authorizer or M.T.F Epsilon-11"
+            }
+          }
+        },
+        {
+          "content": "New Signature Box",
+          "uid": 821585447,
+          "args": [],
+          "type": "signature",
+          "params": []
+        }
+      ],
+      "effects": []
+    }
+  ],
+  "approved": true,
+  "signatures": [],
+  "overlays": {}
+}
