@@ -211,16 +211,10 @@
           }
         },
         {
-          "content": "To be able to cook chemicals that would help the site in some cases",
+          "content": "[Sample Reason]",
           "args": [],
           "type": "paragraph",
-          "params": [],
-          "_wrapCaches": {
-            "typewriter_21:425": {
-              "result": "To be able to cook chemicals that would\nhelp the site in some cases",
-              "content": "To be able to cook chemicals that would help the site in some cases"
-            }
-          }
+          "params": []
         }
       ],
       "effects": []
